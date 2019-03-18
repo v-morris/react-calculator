@@ -3,12 +3,62 @@ import './Calculator.css';
 
 class Calculator extends React.Component {
     state = {
-        displayValue: 0
+        displayValue: '0',
+        operator: false,
+        value: 0
+    }
+
+    inputDigit(digit) {
+        const { displayValue } = this.state;
+        this.setState({
+            displayValue: displayValue === '0' ? String(digit) : displayValue + String(digit)
+        })
+    }
+
+    clear() {
+        const { displayValue } = this.state;
+        if (displayValue !== '0') {
+            this.setState({
+                displayValue: '0'
+            })
+        }
+    }
+
+    plusMinus() {
+        const { displayValue } = this.state;
+        if (displayValue !== '0') {
+            this.setState({
+                displayValue: displayValue.charAt(0) !== '-' ? '-' + displayValue : displayValue.substr(1)
+            })
+        }
+    }
+
+    decimal(decimal) {
+        const { displayValue } = this.state;
+        if (!displayValue.includes('.')) {
+            this.setState({
+                displayValue: displayValue + String(decimal)
+            })
+        }
+    }
+
+    percent() {
+        const { displayValue } = this.state;
+        if (displayValue !== '0') {
+            this.setState({
+                displayValue: displayValue / 100
+            })
+        }
+    }
+
+    operator(){
+        const { displayValue } = this.state;
+
     }
 
     render() {
-        const {displayValue} = this.state
-
+        const { displayValue } = this.state;
+        console.log(displayValue)
         return (
             <div className="calc">
                 <div className="wrapper">
@@ -17,31 +67,31 @@ class Calculator extends React.Component {
                         <div className="input-keys">
                             <div className="input-left">
                                 <div className="function-keys">
-                                    <button className="calc-key key-clear">AC</button>
-                                    <button className="calc-key key-sign">±</button>
-                                    <button className="calc-key key-percent">%</button>
+                                    <button className="calc-key key-clear" onClick={() => { this.clear() }}>AC</button>
+                                    <button className="calc-key key-sign" onClick={() => { this.plusMinus() }}>±</button>
+                                    <button className="calc-key key-percent" onClick={() => { this.percent() }}>%</button>
                                 </div>
                                 <div className="digit-keys">
-                                    <button className="calc-key key-0">0</button>
-                                    <button className="calc-key key-dot">.</button>
-                                    <button className="calc-key key-1">1</button>
-                                    <button className="calc-key key-2">2</button>
-                                    <button className="calc-key key-3">3</button>
-                                    <button className="calc-key key-4">4</button>
-                                    <button className="calc-key key-5">5</button>
-                                    <button className="calc-key key-6">6</button>
-                                    <button className="calc-key key-7">7</button>
-                                    <button className="calc-key key-8">8</button>
-                                    <button className="calc-key key-9">9</button>
+                                    <button className="calc-key key-0" onClick={() => { this.inputDigit(0) }}>0</button>
+                                    <button className="calc-key key-dot" onClick={() => { this.decimal('.') }}>.</button>
+                                    <button className="calc-key key-1" onClick={() => { this.inputDigit(1) }}>1</button>
+                                    <button className="calc-key key-2" onClick={() => { this.inputDigit(2) }}>2</button>
+                                    <button className="calc-key key-3" onClick={() => { this.inputDigit(3) }}>3</button>
+                                    <button className="calc-key key-4" onClick={() => { this.inputDigit(4) }}>4</button>
+                                    <button className="calc-key key-5" onClick={() => { this.inputDigit(5) }}>5</button>
+                                    <button className="calc-key key-6" onClick={() => { this.inputDigit(6) }}>6</button>
+                                    <button className="calc-key key-7" onClick={() => { this.inputDigit(7) }}>7</button>
+                                    <button className="calc-key key-8" onClick={() => { this.inputDigit(8) }}>8</button>
+                                    <button className="calc-key key-9" onClick={() => { this.inputDigit(9) }}>9</button>
                                 </div>
                             </div>
                             <div className="input-right">
                                 <div className="operator-keys">
-                                    <button className="calc-key key-divide">÷</button>
-                                    <button className="calc-key key-multiply">x</button>
-                                    <button className="calc-key key-minus">-</button>
-                                    <button className="calc-key key-plus">+</button>
-                                    <button className="calc-key key-equal">=</button>
+                                    <button className="calc-key key-divide" onClick={() => { this.operator('/') }}>÷</button>
+                                    <button className="calc-key key-multiply" onClick={() => { this.operator('*') }}>x</button>
+                                    <button className="calc-key key-minus" onClick={() => { this.operator('-') }}>-</button>
+                                    <button className="calc-key key-plus" onClick={() => { this.operator('+') }}>+</button>
+                                    <button className="calc-key key-equal" onClick={() => { this.operator('=') }}>=</button>
                                 </div>
                             </div>
                         </div>
