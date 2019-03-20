@@ -5,30 +5,37 @@ class Calculator extends React.Component {
     state = {
         displayValue: '0',
         operatorPresent: false,
-        operator: null,
-        value: '0',
-        prevVal: null
+        value: null,
+        operator: null
     }
 
     inputDigit(digit) {
-        const { displayValue } = this.state;
-        this.setState({
-            displayValue: displayValue === '0' ? String(digit) : displayValue + String(digit)
-        })
+        const { displayValue, operatorPresent } = this.state;
+        if (operatorPresent) {
+            if (displayValue.length < 13) {
+                this.setState({
+                    displayValue: String(digit),
+                    operatorPresent: false
+                })
+            }
+        }
+
+        else {
+            if (displayValue.length < 12) {
+                this.setState({
+                    displayValue: displayValue === '0' ? String(digit) : displayValue + String(digit)
+                })
+            }
+        }
     }
 
     clear() {
-        const { displayValue } = this.state;
-        const { prevVal } = this.state;
-        if (displayValue !== '0' || prevVal !== '0') {
-            this.setState({
-                displayValue: '0',
-                value: '0',
-                operator: null,
-                operatorPresent: false,
-                prevVal: null
-            })
-        }
+        this.setState({
+            displayValue: '0',
+            value: null,
+            operatorPresent: false
+        })
+
     }
 
     plusMinus() {
@@ -41,61 +48,74 @@ class Calculator extends React.Component {
     }
 
     decimal(decimal) {
-        const { displayValue } = this.state;
-        if (!displayValue.includes('.')) {
+        const { displayValue, operatorPresent } = this.state;
+        if (operatorPresent) {
             this.setState({
-                displayValue: displayValue + String(decimal)
+                displayValue: '.',
+                operatorPresent: false
+            })
+        } else if (!displayValue.includes('.')) {
+            this.setState({
+                displayValue: displayValue + String(decimal),
+                operatorPresent: false
             })
         }
+
     }
 
     percent() {
         const { displayValue } = this.state;
+        const percent = parseFloat(displayValue)
         if (displayValue !== '0') {
             this.setState({
-                displayValue: displayValue / 100
+                displayValue: String(percent / 100)
             })
         }
     }
 
-    operator(operand) {
-        const { displayValue } = this.state;
-        const { value } = this.state;
-        const { operator } = this.state;
-        const { operatorPresent } = this.state;
-        const { prevVal } = this.state;
-
-        if (operand !== '=') {
-            this.setState({
-                operatorPresent: true,
-                displayValue: '0',
-                operator: operand,
-                prevVal: displayValue + (operand)
-
-            })
-        }
-        else {
-            this.setState({
-                displayValue: eval(prevVal)
-            })
-        }
-        if (prevVal !== null) {
-            this.setState({
-                prevVal: prevVal + displayValue + operand
-            })
+    operator(operation) {
+        const { displayValue, operator, value } = this.state;
+        const nextValue = parseFloat(displayValue)
+        const operations = {
+            '/': (prevValue, nextValue) => prevValue / nextValue,
+            '*': (prevValue, nextValue) => prevValue * nextValue,
+            '-': (prevValue, nextValue) => prevValue - nextValue,
+            '+': (prevValue, nextValue) => prevValue + nextValue,
+            '=': (nextValue) => nextValue
         }
 
+        if (value == null) {
+            this.setState({
+                value: nextValue
+            })
+        }
+        else if (operator) {
+            const currentValue = value || 0
+            const compute = operations[operator](currentValue, nextValue)
+            if ((String(compute).length) < 12) {
+                this.setState({
+                    value: compute,
+                    displayValue: String(compute)
+                })
+            }
+            else {
+                this.setState({
+                    value: compute,
+                    displayValue: String(compute.toExponential(4))
+                })
+            }
+        }
+
+        this.setState({
+            operatorPresent: true,
+            operator: operation
+        })
 
     }
+
 
     render() {
         const { displayValue } = this.state;
-        console.log("displayValue", displayValue)
-        console.log("operand", this.state.operand)
-        console.log("operator", this.state.operator)
-        console.log("operatorPresent", this.state.operatorPresent)
-        console.log("Value", this.state.value)
-        console.log("prev val", this.state.prevVal)
         return (
             <div className="calc">
                 <div className="wrapper">
