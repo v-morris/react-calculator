@@ -4,8 +4,10 @@ import './Calculator.css';
 class Calculator extends React.Component {
     state = {
         displayValue: '0',
-        operator: false,
-        value: 0
+        operatorPresent: false,
+        operator: null,
+        value: '0',
+        prevVal: null
     }
 
     inputDigit(digit) {
@@ -17,9 +19,14 @@ class Calculator extends React.Component {
 
     clear() {
         const { displayValue } = this.state;
-        if (displayValue !== '0') {
+        const { prevVal } = this.state;
+        if (displayValue !== '0' || prevVal !== '0') {
             this.setState({
-                displayValue: '0'
+                displayValue: '0',
+                value: '0',
+                operator: null,
+                operatorPresent: false,
+                prevVal: null
             })
         }
     }
@@ -51,14 +58,44 @@ class Calculator extends React.Component {
         }
     }
 
-    operator(){
+    operator(operand) {
         const { displayValue } = this.state;
+        const { value } = this.state;
+        const { operator } = this.state;
+        const { operatorPresent } = this.state;
+        const { prevVal } = this.state;
+
+        if (operand !== '=') {
+            this.setState({
+                operatorPresent: true,
+                displayValue: '0',
+                operator: operand,
+                prevVal: displayValue + (operand)
+
+            })
+        }
+        else {
+            this.setState({
+                displayValue: eval(prevVal)
+            })
+        }
+        if (prevVal !== null) {
+            this.setState({
+                prevVal: prevVal + displayValue + operand
+            })
+        }
+
 
     }
 
     render() {
         const { displayValue } = this.state;
-        console.log(displayValue)
+        console.log("displayValue", displayValue)
+        console.log("operand", this.state.operand)
+        console.log("operator", this.state.operator)
+        console.log("operatorPresent", this.state.operatorPresent)
+        console.log("Value", this.state.value)
+        console.log("prev val", this.state.prevVal)
         return (
             <div className="calc">
                 <div className="wrapper">
